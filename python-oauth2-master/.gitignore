@@ -1,7 +1,0 @@
-*.py?
-*.egg-info
-*.swp
-.coverage
-coverage.xml
-nosetests.xml
-.tox
