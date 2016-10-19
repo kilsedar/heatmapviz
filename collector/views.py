@@ -8,6 +8,7 @@ import urllib2
 import requests
 import flickrapi
 import oauth2 as oauth
+import os
 from math import ceil
 
 import shapefile
@@ -181,7 +182,7 @@ def handle_tweets(line, country):
                             hashtags += ht['text'] + ","
                         tweet_db.hashtags = hashtags
                     tweet_db.save()
-                    print 'Coordinates! ' + str(tweet['coordinates']['coordinates'])
+                    #print 'Coordinates! ' + str(tweet['coordinates']['coordinates'])
                  #else:
                   #  print tweet
             except:
@@ -209,11 +210,12 @@ def oauth_req(url, http_method="GET", post_body="", http_headers=None):
     return rs
  
   
-def json_OL_heatmap(request, days=2, platform='FSQ', date_start=None, date_end=None, keyword=None):
+def json_OL_heatmap(request, days=2, platform='FSQ', date_start=None, date_end=None, keyword=''):
     """Feeds an OpenLayers client to display data as heatmap"""
     #Load the shapefile of polygons and convert it to shapely polygon objects
-    polygons_sf = shapefile.Reader("static/shapefile/griglia_0_02.shp")
-    #polygons_sf = shapefile.Reader("shapefile/test.shp")
+    griglia_lomb = os.path.join(settings.BASE_DIR, "staticfiles", "shapefile", "griglia_0_02.shp")
+    #polygons_sf = shapefile.Reader("/var/www/html/isprs/staticfiles/shapefile/griglia_0_02.shp")
+    polygons_sf = shapefile.Reader(griglia_lomb)
     polygon_shapes = polygons_sf.shapes()
     polygon_points = [q.points for q in polygon_shapes ]
     polygons = [Polygon(q) for q in polygon_points]

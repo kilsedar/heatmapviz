@@ -60,8 +60,8 @@ map = new L.Map('map', {
   layers: [baseDark]
 });
 
-var urlTWT = "http://geolab.como.polimi.it/heatmap/collector/json/TWT/";
-var urlFSQ = "http://geolab.como.polimi.it/heatmap/collector/json/FSQ/";
+var urlTWT = "http://geomobile.como.polimi.it/heatmap/collector/json/TWT/";
+var urlFSQ = "http://geomobile.como.polimi.it/heatmap/collector/json/FSQ/";
 
 function getData(url, source) {
   $.get(url, function(data) {
@@ -94,10 +94,10 @@ $("#date_filter").click(function() {
     //console.log(start_date + " --- " + end_date + " --- " + twitter_tag + " --- " + fsq_keyword);
     map.removeLayer(twtLayer);
     map.removeLayer(fsqLayer);
-    urlTWT = "http://geolab.como.polimi.it/heatmap/collector/json/TWT/" + start_date + "/" + end_date + "/";
+    urlTWT = "http://192.168.243.65:8080/collector/json/TWT/" + start_date + "/" + end_date + "/";
     if (twitter_tag != "")
       urlTWT += twitter_tag + "/";
-    urlFSQ = "http://geolab.como.polimi.it/heatmap/collector/json/FSQ/" + start_date + "/" + end_date + "/";
+    urlFSQ = "http://192.168.243.65:8080/collector/json/FSQ/" + start_date + "/" + end_date + "/";
     if (fsq_keyword != "")
       urlFSQ += fsq_keyword + "/";
     //console.log(urlTWT + " --- " + urlFSQ);
