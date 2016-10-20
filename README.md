@@ -8,6 +8,7 @@ Requirements
     * postgres + postgis (http://www.postgresql.org/download/)
     * pip install psycopg2
     * pip install requests
+    * libspatialindex-dev
     * pip install rtree
     * pip install pyshp
     * pip install oauth2

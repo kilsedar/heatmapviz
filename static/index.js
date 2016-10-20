@@ -94,10 +94,10 @@ $("#date_filter").click(function() {
     //console.log(start_date + " --- " + end_date + " --- " + twitter_tag + " --- " + fsq_keyword);
     map.removeLayer(twtLayer);
     map.removeLayer(fsqLayer);
-    urlTWT = "http://192.168.243.65:8080/collector/json/TWT/" + start_date + "/" + end_date + "/";
+    urlTWT = "http://geomobile.como.polimi.it/heatmap/collector/json/TWT/" + start_date + "/" + end_date + "/";
     if (twitter_tag != "")
       urlTWT += twitter_tag + "/";
-    urlFSQ = "http://192.168.243.65:8080/collector/json/FSQ/" + start_date + "/" + end_date + "/";
+    urlFSQ = "http://geomobile.como.polimi.it/heatmap/collector/json/FSQ/" + start_date + "/" + end_date + "/";
     if (fsq_keyword != "")
       urlFSQ += fsq_keyword + "/";
     //console.log(urlTWT + " --- " + urlFSQ);
@@ -146,7 +146,33 @@ $("input[name='base']").click(function() {
   }
 });
 
-L.DomEvent.disableClickPropagation(L.DomUtil.get('legend'));
-L.DomEvent.disableScrollPropagation(L.DomUtil.get('legend'));
-L.DomEvent.disableClickPropagation(L.DomUtil.get('filter_settings'));
-L.DomEvent.disableScrollPropagation(L.DomUtil.get('filter_settings'));
+$("#legend_a").click(function() {
+  $("#legend").toggle();
+});
+
+$("#filter_settings_a").click(function() {
+  $("#filter_settings").toggle();
+});
+
+function resize() {
+   if ($(window).width() > 600) {
+     $("#legend").css("display", "block");
+     $("#filter_settings").css("display", "block");
+     $("#filter_settings").css("padding", "10px");
+   }
+   else {
+     $("#legend").css("display", "none");
+     $("#filter_settings").css("display", "none");
+     $("#filter_settings").css("padding", "30px 10px 10px 10px");
+   }
+}
+
+function disablePropagation (id) {
+  L.DomEvent.disableClickPropagation(L.DomUtil.get(id));
+  L.DomEvent.disableScrollPropagation(L.DomUtil.get(id));
+}
+
+disablePropagation('legend');
+disablePropagation('legend_a');
+disablePropagation('filter_settings');
+disablePropagation('filter_settings_a');
