@@ -52,9 +52,6 @@ input[type=checkbox] {
   cursor:default;
   font-weight: bold;
 }
-#datepicker_s, #datepicker_e, #input_twt {
-  width: 262px;
-}
 select, #date_filter {
   cursor: pointer;
 }
@@ -65,8 +62,7 @@ select, #date_filter {
   display: block;
 }
 #team {
-  padding-bottom: 10px;
-  font-size: 14px;
+  padding-bottom: 5px;
 }
 #team a {
   color: rgba(255, 51, 51, 1);
@@ -93,12 +89,28 @@ select, #date_filter {
 #legend_a:hover, #filter_settings_a:hover {
   cursor: pointer;
 }
+#heading {
+  font-weight: bold;
+  padding: 5px;
+}
 @media screen and (max-width: 600px) {
   #legend, #filter_settings {
     display: none;
   }
   #filter_settings {
     padding: 30px 10px 10px 10px;
+  }
+  #legend_a, #filter_settings_a {
+    display: block;
+  }
+  * {
+    font-size: 11px;
+  }
+  #team, #team a {
+    font-size: 13px;
+  }
+  #heading {
+    font-size: 20px;
   }
 }
 @media screen and (min-width: 601px) {
@@ -108,14 +120,16 @@ select, #date_filter {
   #filter_settings {
     padding: 10px;
   }
-}
-@media screen and (max-width: 600px) {
-  #legend_a, #filter_settings_a {
-    display: block;
-  }
-}
-@media screen and (min-width: 601px) {
   #legend_a, #filter_settings_a {
     display: none;
+  }
+  * {
+    font-size: 12px;
+  }
+  #team, #team a {
+    font-size: 14px;
+  }
+  #heading {
+    font-size: 26px;
   }
 }

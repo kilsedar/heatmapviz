@@ -158,14 +158,28 @@ function resize() {
    if ($(window).width() > 600) {
      $("#legend").css("display", "block");
      $("#filter_settings").css("display", "block");
-     $("#filter_settings").css("padding", "10px");
+     $("#datepicker_s, #datepicker_e, #input_twt").css("width", $("#select_fsq").width());
    }
    else {
      $("#legend").css("display", "none");
      $("#filter_settings").css("display", "none");
-     $("#filter_settings").css("padding", "30px 10px 10px 10px");
+     $("#filter_settings_a").click(function() {
+       $("#datepicker_s, #datepicker_e, #input_twt").css("width", $("#select_fsq").width());
+     });
    }
 }
+
+$(window).load(function() {
+  //console.log($("#select_fsq").width());
+  if ($(window).width() > 600) {
+    $("#datepicker_s, #datepicker_e, #input_twt").css("width", $("#select_fsq").width());
+  }
+  else {
+    $("#filter_settings_a").click(function() {
+      $("#datepicker_s, #datepicker_e, #input_twt").css("width", $("#select_fsq").width());
+    });
+  }
+});
 
 function disablePropagation (id) {
   L.DomEvent.disableClickPropagation(L.DomUtil.get(id));
