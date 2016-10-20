@@ -16,3 +16,8 @@ Requirements
     * pip install django-cors-headers
     * pip install shapely
     * pip install numpy
+
+Online
+-------------
+
+Access at http://geomobile.como.polimi.it/heatmap/
