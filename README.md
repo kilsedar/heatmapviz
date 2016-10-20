@@ -1,5 +1,5 @@
 # heatmapviz
-WebGIS to visually communicate what is already public over social media. Data was collected using the APIs of Twitter and Foursquare for requesting georeferenced data. This project belongs to the GEOlab - Geomatics and Earth Observation laboratory, submitted to the LBS 2016 Conference in Vienna, Austria, titled as "Joining Spatial Visualization Tools with Social Media Data Using Free and Open Source Tools".
+WebGIS to visually communicate what is already public over social media. Data was collected using the APIs of Twitter and Foursquare for requesting georeferenced data. This project belongs to the GEOlab - Geomatics and Earth Observation laboratory, submitted to the LBS 2016 Conference in Vienna, Austria, titled as "Joining Spatial Visualization Tools with Social Media Data Using Free and Open Source Tools". Accessible at http://geomobile.como.polimi.it/heatmap/.
 
 Requirements
 -------------
@@ -16,8 +16,3 @@ Requirements
     * pip install django-cors-headers
     * pip install shapely
     * pip install numpy
-
-Online
--------------
-
-Access at http://geomobile.como.polimi.it/heatmap/
