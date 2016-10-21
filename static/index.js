@@ -155,18 +155,20 @@ $("#filter_settings_a").click(function() {
 });
 
 function resize() {
-   if ($(window).width() > 600) {
-     $("#legend").css("display", "block");
-     $("#filter_settings").css("display", "block");
-     $("#datepicker_s, #datepicker_e, #input_twt").css("width", $("#select_fsq").width());
-   }
-   else {
-     $("#legend").css("display", "none");
-     $("#filter_settings").css("display", "none");
-     $("#filter_settings_a").click(function() {
-       $("#datepicker_s, #datepicker_e, #input_twt").css("width", $("#select_fsq").width());
-     });
-   }
+  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) {
+    if ($(window).width() > 600) {
+      $("#legend").css("display", "block");
+      $("#filter_settings").css("display", "block");
+      $("#datepicker_s, #datepicker_e, #input_twt").css("width", $("#select_fsq").width());
+    }
+    else {
+      $("#legend").css("display", "none");
+      $("#filter_settings").css("display", "none");
+      $("#filter_settings_a").click(function() {
+        $("#datepicker_s, #datepicker_e, #input_twt").css("width", $("#select_fsq").width());
+      });
+    }
+  }
 }
 
 $(window).load(function() {
