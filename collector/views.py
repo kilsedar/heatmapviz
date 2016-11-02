@@ -157,10 +157,7 @@ def twitter(request, bbox='6.63,36.46,18.78,47.09'):
             print 'Waiting %s seconds' % backoff_http_error
             time.sleep(backoff_http_error)
             backoff_http_error = min(backoff_http_error * 2, 320)
-
-        
-
-        
+   
     return HttpResponse('Finished!\nlast response: </br>'+"<a href='"+str(stream)+"' >"+str(stream)+"</a>")
 
 def handle_tweets(line, country):
