@@ -253,7 +253,7 @@ def json_OL_heatmap(request, days=2, platform='FSQ', date_start=None, date_end=N
         else:
             print "setting cache", platform
             if platform == 'TWT':
-                data = TwitterData.objects.filter(date__range=(datetime.date.today()-datetime.timedelta(days=days), datetime.date.today()))
+                data = TwitterData.objects.filter(lombardy=True, date__range=(datetime.date.today()-datetime.timedelta(days=days), datetime.date.today()))
                 if keyword != None:
                     data = data.filter(text__contains=keyword)
             else:
@@ -266,7 +266,7 @@ def json_OL_heatmap(request, days=2, platform='FSQ', date_start=None, date_end=N
             data = cache.get(platform+str(date_start)+"_"+str(date_end))
         else:
             if platform == 'TWT':
-                data = TwitterData.objects.filter(date__range=(datetime.datetime.strptime(date_start, '%d-%m-%Y_%H:%M:%S'), datetime.datetime.strptime(date_end, '%d-%m-%Y_%H:%M:%S')))
+                data = TwitterData.objects.filter(lombardy=True, date__range=(datetime.datetime.strptime(date_start, '%d-%m-%Y_%H:%M:%S'), datetime.datetime.strptime(date_end, '%d-%m-%Y_%H:%M:%S')))
                 if keyword is not None:
                     data = data.filter(text__contains=keyword)
             else:
