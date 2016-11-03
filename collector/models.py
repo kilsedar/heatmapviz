@@ -144,6 +144,7 @@ class TwitterData(models.Model):
             if lomb_poly.contains(t.point):
                 t.lombardy = True
                 t.save()
+                print "marked this %s, %s as in lombardy! loc: %s" % (t.latitude, t.longitude, t.user_location)
 
 
 class Lombardia(models.Model):

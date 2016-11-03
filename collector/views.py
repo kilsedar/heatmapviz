@@ -135,7 +135,7 @@ def twitter(request, bbox='6.63,36.46,18.78,47.09'):
     while True:
         try:
             stream = oauth_req(url)
-            for line in stream:
+            for line in stream.iter_lines():
                 handle_tweets(line, country) #Saves tweet
         except:
             # Network error, use linear back off up to 16 seconds
@@ -161,7 +161,7 @@ def twitter(request, bbox='6.63,36.46,18.78,47.09'):
     return HttpResponse('Finished!\nlast response: </br>'+"<a href='"+str(stream)+"' >"+str(stream)+"</a>")
 
 def handle_tweets(line, country):
-    if line.endswith('\r\n'):
+    if line.endswith(''):
             try:
                  tweet = json.loads(line)
                  #Only saves the gereferenced tweets
@@ -183,6 +183,8 @@ def handle_tweets(line, country):
                  #else:
                   #  print tweet
             except:
+                print sys.exc_info()[0]
+
                 print "::Not saved!: %s" % line
 
 
@@ -194,7 +196,7 @@ def oauth_req(url, http_method="GET", post_body="", http_headers=None):
     params = {
     'oauth_version': "1.0",
     'oauth_nonce': oauth.generate_nonce(),
-    'oauth_timestamp': str(int(time.time())),
+    'oauth_timestamp': str(int(time.time()))
     }
     params['oauth_token'] = token.key
     params['oauth_consumer_key'] = consumer.key
@@ -203,7 +205,8 @@ def oauth_req(url, http_method="GET", post_body="", http_headers=None):
     #signes request
     req.sign_request(signature_method, consumer, token)
     #sends request
-    rs = urllib2.urlopen(req.to_url())
+    #rs = urllib2.urlopen(req.to_url())
+    rs = requests.get(req.to_url(), stream=True)
     return rs
  
   
