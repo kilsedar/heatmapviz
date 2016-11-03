@@ -113,6 +113,7 @@ def foursquare_circle(request):
                             data.save()
         GPSData.del_dups()
         GPSData.gen_fs_dups()
+        TwitterData.flag_lombardy()
 
 
     return HttpResponse('Finished!\nlast response: </br>'+r.content)

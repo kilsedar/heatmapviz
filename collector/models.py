@@ -139,12 +139,14 @@ class TwitterData(models.Model):
     @classmethod
     def flag_lombardy(cls):
         lomb_poly = GEOSGeometry('POLYGON((8.49 44.67, 11.42 44.67, 11.42 46.63, 8.49 46.63, 8.49 44.67, 8.49 44.67))', srid=4326)
-        _all = cls.objects.all()
-        for t in _all:
+        today_min = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
+        today_max = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
+        today_data = cls.objects.filter(date__range=(today_min, today_max))
+        for t in today_data:
             if lomb_poly.contains(t.point):
                 t.lombardy = True
                 t.save()
-                print "marked this %s, %s as in lombardy! loc: %s" % (t.latitude, t.longitude, t.user_location)
+                #print "marked this %s, %s as in lombardy! loc: %s" % (t.latitude, t.longitude, t.user_location)
 
 
 class Lombardia(models.Model):
