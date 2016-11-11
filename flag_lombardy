@@ -1,0 +1,7 @@
+﻿
+--Flag lombardy for heatmapviz griglia
+update collector_twitterdata
+set lombardy = 't' 
+where date <'2016-06-02 14:45:15+01'
+and ST_Intersects(ST_GeometryFromText('POINT(' || longitude || ' ' || latitude || ')'),
+ST_GeometryFromText('POLYGON((8.49 44.67, 11.42 44.67, 11.42 46.63, 8.49 46.63, 8.49 44.67, 8.49 44.67))'))
