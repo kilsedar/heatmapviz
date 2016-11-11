@@ -277,43 +277,47 @@ def json_OL_heatmap(request, days=2, platform='FSQ', date_start=None, date_end=N
             if keyword is None:
                 cache.set(platform+str(date_start)+"_"+str(date_end), data, 172800)
     
-    point_coords = [[obj.longitude, obj.latitude] for obj in data]
-    points = [Point_S(q) for q in point_coords]
+    if cache.get('jfile_%_%_%' % (platform, date_start, date_end), jfile) is None:
+        point_coords = [[obj.longitude, obj.latitude] for obj in data]
+        points = [Point_S(q) for q in point_coords]
 
-    #Assign one or more matching polygons to each point
-    matches = []
-    for i in range(len(points)): #Iterate through each point
-        temp = None
-        #Iterate only through the bounding boxes which contain the point
-        for j in idx.intersection( point_coords[i]):
-            #Verify that point is within the polygon itself not just the bounding box
-            if points[i].within(polygons[j]):
-                #print "Match found! ",j
-                temp=j
-                break
-        matches.append(temp) #Either the first match found, or None for no matches
+        #Assign one or more matching polygons to each point
+        matches = []
+        for i in range(len(points)): #Iterate through each point
+            temp = None
+            #Iterate only through the bounding boxes which contain the point
+            for j in idx.intersection( point_coords[i]):
+                #Verify that point is within the polygon itself not just the bounding box
+                if points[i].within(polygons[j]):
+                    #print "Match found! ",j
+                    temp=j
+                    break
+            matches.append(temp) #Either the first match found, or None for no matches
 
-    #Create a dictionary containing the counts of points in the cells
-    count = dict(Counter(matches))
+        #Create a dictionary containing the counts of points in the cells
+        count = dict(Counter(matches))
 
-    #Create a list of the counts to be associated to any cell ID
-    d = list()
-    for i in range(len(poly_index)):
-        if poly_index[i] in count:
-           d.append(count[i])
-        else:
-           d.append(0)
- 
-    #Write the JS variable to feed the Heatmap
-    jfile = dict()
-    jfile['max'] = max(d)
-    ps = list()
-    for i in range(len(poly_index)):
-        if d[i] != 0:
-            ps.append({'lat': lat_centres[i], 'lng': lon_centres[i], 'count': d[i]})
-    jfile['data'] = ps
-
-    return JsonResponse(jfile)
+        #Create a list of the counts to be associated to any cell ID
+        d = list()
+        for i in range(len(poly_index)):
+            if poly_index[i] in count:
+               d.append(count[i])
+            else:
+               d.append(0)
+     
+        #Write the JS variable to feed the Heatmap
+        jfile = dict()
+        jfile['max'] = max(d)
+        ps = list()
+        for i in range(len(poly_index)):
+            if d[i] != 0:
+                ps.append({'lat': lat_centres[i], 'lng': lon_centres[i], 'count': d[i]})
+        jfile['data'] = ps
+        cache.set('jfile_%_%_%' % (platform, date_start, date_end), jfile)
+    else:
+        jfile = cache.get('jfile_%_%_%' % (platform, date_start, date_end), jfile)
+    
+    return JsonResponse()
 
 def heatmap(request):
     return render(request, 'index.html')
