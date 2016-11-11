@@ -317,7 +317,7 @@ def json_OL_heatmap(request, days=2, platform='FSQ', date_start=None, date_end=N
     else:
         jfile = cache.get('jfile_%s_%s_%s' % (platform, date_start, date_end))
     
-    return JsonResponse()
+    return JsonResponse(jfile)
 
 def heatmap(request):
     return render(request, 'index.html')
