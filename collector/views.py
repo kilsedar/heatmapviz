@@ -277,7 +277,7 @@ def json_OL_heatmap(request, days=2, platform='FSQ', date_start=None, date_end=N
             if keyword is None:
                 cache.set(platform+str(date_start)+"_"+str(date_end), data, 172800)
     
-    if cache.get('jfile_%s_%s_%s' % (platform, date_start, date_end), jfile) is None:
+    if cache.get('jfile_%s_%s_%s' % (platform, date_start, date_end)) is None:
         point_coords = [[obj.longitude, obj.latitude] for obj in data]
         points = [Point_S(q) for q in point_coords]
 
