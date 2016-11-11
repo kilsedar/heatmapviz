@@ -315,7 +315,7 @@ def json_OL_heatmap(request, days=2, platform='FSQ', date_start=None, date_end=N
         jfile['data'] = ps
         cache.set('jfile_%s_%s_%s' % (platform, date_start, date_end), jfile)
     else:
-        jfile = cache.get('jfile_%s_%s_%s' % (platform, date_start, date_end), jfile)
+        jfile = cache.get('jfile_%s_%s_%s' % (platform, date_start, date_end))
     
     return JsonResponse()
 
