@@ -250,34 +250,34 @@ def json_OL_heatmap(request, days=2, platform='FSQ', date_start=None, date_end=N
     if date_start is None and date_end is None:
         #Get the points HERE!!!
         #print cache.get(platform)
-        if cache.get(platform) is not None:
-            print "using cache!", platform
-            data = cache.get(platform)
+        #if cache.get(platform) is not None:
+            #print "using cache!", platform
+            #data = cache.get(platform)
+        #else:
+            #print "setting cache", platform
+        if platform == 'TWT':
+            data = TwitterData.objects.filter(lombardy=True, date__range=(datetime.date.today()-datetime.timedelta(days=days), datetime.date.today()))
+            if keyword != None:
+                data = data.filter(text__contains=keyword)
         else:
-            print "setting cache", platform
-            if platform == 'TWT':
-                data = TwitterData.objects.filter(lombardy=True, date__range=(datetime.date.today()-datetime.timedelta(days=days), datetime.date.today()))
-                if keyword != None:
-                    data = data.filter(text__contains=keyword)
-            else:
-                data = GPSData.objects.filter(platform=platform, date_taken__range=(datetime.date.today()-datetime.timedelta(days=days), datetime.date.today()))
-            cache.set(platform, data, 172800)
+            data = GPSData.objects.filter(platform=platform, date_taken__range=(datetime.date.today()-datetime.timedelta(days=days), datetime.date.today()))
+            #cache.set(platform, data, 172800)
     else:
         date_start = date_start+"_00:00:00"
         date_end = date_end+"_00:00:00"
-        if cache.get(platform+str(date_start)+"_"+str(date_end)) is not None and keyword is None:
-            data = cache.get(platform+str(date_start)+"_"+str(date_end))
+        #if cache.get(platform+str(date_start)+"_"+str(date_end)) is not None and keyword is None:
+            #data = cache.get(platform+str(date_start)+"_"+str(date_end))
+        #else:
+        if platform == 'TWT':
+            data = TwitterData.objects.filter(lombardy=True, date__range=(datetime.datetime.strptime(date_start, '%d-%m-%Y_%H:%M:%S'), datetime.datetime.strptime(date_end, '%d-%m-%Y_%H:%M:%S')))
+            if keyword is not None:
+                data = data.filter(text__contains=keyword)
         else:
-            if platform == 'TWT':
-                data = TwitterData.objects.filter(lombardy=True, date__range=(datetime.datetime.strptime(date_start, '%d-%m-%Y_%H:%M:%S'), datetime.datetime.strptime(date_end, '%d-%m-%Y_%H:%M:%S')))
-                if keyword is not None:
-                    data = data.filter(text__contains=keyword)
-            else:
-                data = GPSData.objects.filter(platform=platform, date_taken__range=(datetime.datetime.strptime(date_start, '%d-%m-%Y_%H:%M:%S'), datetime.datetime.strptime(date_end, '%d-%m-%Y_%H:%M:%S')))
-                if platform == 'FSQ' and keyword is not None:
-                    data = data.filter(fs_data__category = keyword)
-            if keyword is None:
-                cache.set(platform+str(date_start)+"_"+str(date_end), data, 172800)
+            data = GPSData.objects.filter(platform=platform, date_taken__range=(datetime.datetime.strptime(date_start, '%d-%m-%Y_%H:%M:%S'), datetime.datetime.strptime(date_end, '%d-%m-%Y_%H:%M:%S')))
+            if platform == 'FSQ' and keyword is not None:
+                data = data.filter(fs_data__category = keyword)
+        #if keyword is None:
+            #cache.set(platform+str(date_start)+"_"+str(date_end), data, 172800)
     
     if cache.get('jfile_%s_%s_%s' % (platform, date_start, date_end)) is None:
         point_coords = [[obj.longitude, obj.latitude] for obj in data]
@@ -319,7 +319,7 @@ def json_OL_heatmap(request, days=2, platform='FSQ', date_start=None, date_end=N
     else:
         jfile = cache.get('jfile_%s_%s_%s' % (platform, date_start, date_end))
     
-    print jfile
+    #print jfile
 
     return JsonResponse(jfile)
 
