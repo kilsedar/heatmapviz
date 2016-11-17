@@ -113,10 +113,12 @@ def foursquare_circle(request):
                             data.save()
         GPSData.del_dups()
         GPSData.gen_fs_dups()
-        TwitterData.flag_lombardy()
-
 
     return HttpResponse('Finished!\nlast response: </br>'+r.content)
+
+def twitter_flag(request):
+    TwitterData.flag_lombardy()
+    return HttpResponse('ok!')
 
 def twitter(request, bbox='6.63,36.46,18.78,47.09'):
     #url for streaming API limited to the bounding box for Italy/bbox can also be a URL param

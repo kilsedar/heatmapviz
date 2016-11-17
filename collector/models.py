@@ -1,7 +1,8 @@
 import time
+import datetime
 from django.db import models
 from django.contrib.gis.db import models as geo_models
-from django.contrib.gis.geos import Point, GEOSGeometry
+from django.contrib.gis.geos import GEOSGeometry
 
 # Create your models here.
 
@@ -130,7 +131,7 @@ class TwitterData(models.Model):
 
     @property
     def point(self):
-        return Point(self.longitude, self.latitude, srid=4326)
+        return GEOSGeometry('POINT('+str(self.longitude)+' '+str(self.latitude)+')')
 
     @classmethod
     def del_dups(cls):
@@ -145,9 +146,9 @@ class TwitterData(models.Model):
         lomb_poly = GEOSGeometry('POLYGON((8.49 44.67, 11.42 44.67, 11.42 46.63, 8.49 46.63, 8.49 44.67, 8.49 44.67))', srid=4326)
         today_min = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
         today_max = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
-        today_data = cls.objects.filter(date__range=(today_min, today_max))
+        today_data = cls.objects.filter(country='ITA', date__range=(today_min, today_max))
         for t in today_data:
-            if lomb_poly.contains(t.point):
+            if t.latitude is not None and lomb_poly.contains(t.point):
                 t.lombardy = True
                 t.save()
                 #print "marked this %s, %s as in lombardy! loc: %s" % (t.latitude, t.longitude, t.user_location)
