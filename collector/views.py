@@ -153,7 +153,7 @@ def twitter(request, bbox='6.63,36.46,18.78,47.09'):
             backoff_network_error = min(backoff_network_error + 1, 16)
             continue
         # HTTP Error
-        sc = stream.getcode()
+        sc = stream.status_code
         if sc == 420:
             # Rate limit, use exponential back off starting with 1 minute and double each attempt
             print 'Rate limit, waiting %s seconds' % backoff_rate_limit
@@ -161,7 +161,7 @@ def twitter(request, bbox='6.63,36.46,18.78,47.09'):
             backoff_rate_limit *= 2
         else:
             # HTTP error, use exponential back off up to 320 seconds
-            print 'HTTP error %s, %s' % (sc, stream.getcode())
+            print 'HTTP error %s, %s' % (sc, sc)
             print 'Waiting %s seconds' % backoff_http_error
             time.sleep(backoff_http_error)
             backoff_http_error = min(backoff_http_error * 2, 320)
