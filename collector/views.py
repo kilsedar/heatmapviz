@@ -65,54 +65,59 @@ def flickr(request, bbox='8.4931,44.9026,11.4316,46.6381', min_date=1451779200, 
 
 def foursquare_circle(request):
     #Asks for areas of (14142*pi)^2 over the venues API of foursquare to cover fo the Lombardy region in Italy
-    circles = FSCircle.objects.filter(radius=14142)
-    for c in circles:
-        url = 'https://api.foursquare.com/v2/venues/explore'
-        url += '?client_id=%s&client_secret=%s&limit=50&intent=browse' % (settings.FOURSQUARE_CLIENT_ID, settings.FOURSQUARE_CLIENT_SECRET)
-        url += '&v=20160101&m=foursquare'
-        #Center and radius for each circle to cover the Lombardy region
-        url += '&ll=%s,%s&radius=%s' % (c.latitude, c.longitude, c.radius)
-        start = 0
-        r = requests.get(url)
-        if r.status_code == 200:
+    try:
+        circles = FSCircle.objects.filter(radius=14142)
+        for c in circles:
+            url = 'https://api.foursquare.com/v2/venues/explore'
+            url += '?client_id=%s&client_secret=%s&limit=50&intent=browse' % (settings.FOURSQUARE_CLIENT_ID, settings.FOURSQUARE_CLIENT_SECRET)
+            url += '&v=20160101&m=foursquare'
+            #Center and radius for each circle to cover the Lombardy region
+            url += '&ll=%s,%s&radius=%s' % (c.latitude, c.longitude, c.radius)
+            start = 0
+            r = requests.get(url)
+            if r.status_code == 200:
 
-            js = json.loads(r.content)
-            top = int(ceil(js['response']['totalResults']/50))
+                js = json.loads(r.content)
+                top = int(ceil(js['response']['totalResults']/50))
 
-            for item in js['response']['groups'][0]['items']:
-                venue = item['venue']
-                if (venue['hereNow']['count'] > 0):
-                    
-                    fs_data = FoursquareData(   checkin_count=venue['stats']['checkinsCount'], here_now=venue['hereNow']['count'],
-                                                postal_code=venue['location'].get('postalCode', None), category=venue['categories'][0]['name'], 
-                                                venue=venue['name'], radius=c.radius)
+                for item in js['response']['groups'][0]['items']:
+                    venue = item['venue']
+                    if (venue['hereNow']['count'] > 0):
+                        
+                        fs_data = FoursquareData(   checkin_count=venue['stats']['checkinsCount'], here_now=venue['hereNow']['count'],
+                                                    postal_code=venue['location'].get('postalCode', None), category=venue['categories'][0]['name'], 
+                                                    venue=venue['name'], radius=c.radius)
 
-                    fs_data.save()
-                    data = GPSData( latitude=venue['location']['lat'], longitude=venue['location']['lng'], date_taken=datetime.datetime.now(), 
-                                    platform=GPSData.FOURSQUARE, fs_data=fs_data)
-                    data.save()
-            #Iter pages
-            for i in range(top-1):
-                start += 50
-                url += '&offset='+str(start)
-                r = requests.get(url)
-                if r is not None:
-                    js = json.loads(r.content)
-                    #Iter results
-                    for item in js['response']['groups'][0]['items']:
-                        venue = item['venue']
-                        if (venue['hereNow']['count'] > 0):
-                            
-                            #Create local object with the json fields
-                            fs_data = FoursquareData(   checkin_count=venue['stats']['checkinsCount'], here_now=venue['hereNow']['count'],
-                                                        postal_code=venue['location'].get('postalCode', None), category=venue['categories'][0]['name'],
-                                                        venue=venue['name'])
-                            fs_data.save()
-                            data = GPSData( latitude=venue['location']['lat'], longitude=venue['location']['lng'], date_taken=datetime.datetime.now(), 
-                                            platform=GPSData.FOURSQUARE, fs_data=fs_data)
-                            data.save()
+                        fs_data.save()
+                        data = GPSData( latitude=venue['location']['lat'], longitude=venue['location']['lng'], date_taken=datetime.datetime.now(), 
+                                        platform=GPSData.FOURSQUARE, fs_data=fs_data)
+                        data.save()
+                #Iter pages
+                for i in range(top-1):
+                    start += 50
+                    url += '&offset='+str(start)
+                    r = requests.get(url)
+                    if r is not None:
+                        js = json.loads(r.content)
+                        #Iter results
+                        for item in js['response']['groups'][0]['items']:
+                            venue = item['venue']
+                            if (venue['hereNow']['count'] > 0):
+                                
+                                #Create local object with the json fields
+                                fs_data = FoursquareData(checkin_count=venue['stats']['checkinsCount'], here_now=venue['hereNow']['count'],
+                                                            postal_code=venue['location'].get('postalCode', None), category=venue['categories'][0]['name'],
+                                                            venue=venue['name'])
+                                fs_data.save()
+                                data = GPSData( latitude=venue['location']['lat'], longitude=venue['location']['lng'], date_taken=datetime.datetime.now(), 
+                                                platform=GPSData.FOURSQUARE, fs_data=fs_data)
+                                data.save()
+                                print "saving! %s" % data.fs_data.venue
+            
         GPSData.del_dups()
         GPSData.gen_fs_dups()
+    except:
+        print "FSQ exception.. %s" % sys.exc_info()[0]
 
     return HttpResponse('Finished!\nlast response: </br>'+r.content)
 
@@ -124,8 +129,8 @@ def twitter(request, bbox='6.63,36.46,18.78,47.09'):
     #url for streaming API limited to the bounding box for Italy/bbox can also be a URL param
     country = "ITA"
     url = "https://stream.twitter.com/1.1/statuses/filter.json?locations=%s" % (bbox)
-    if bbox.split(',')[0] == '38.941': #if bbox is tanzania add also flood words in swahili
-        "&track=%s" % 'mafuriko,gharika'
+    if bbox.split(',')[0] == '29.33': #if bbox is tanzania add also flood words in swahili
+        url += "&track=%s" % 'mafuriko,gharika'
         country = "TZN"
 
     print url

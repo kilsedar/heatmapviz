@@ -11,13 +11,13 @@ class GPSData(models.Model):
     PANORAMIO = 'PNR'
     FOURSQUARE = 'FSQ'
     PLATFORM_CHOICES = (
-        (FLICKR, 'Flickr'),
-        (PANORAMIO, 'Panoramio'),
+        (FLICKR, 'FLC'),
+        (PANORAMIO, 'PNR'),
         (FOURSQUARE, 'FSQ'),
     )
 
-    latitude = models.DecimalField(max_digits=11, decimal_places=7)
-    longitude = models.DecimalField(max_digits=11, decimal_places=7)
+    latitude = models.DecimalField(max_digits=11, decimal_places=7, blank=True)
+    longitude = models.DecimalField(max_digits=11, decimal_places=7, blank=True)
     date_taken = models.DateTimeField(null=True, blank=True, db_index=True)
     date_posted = models.DateTimeField(null=True, blank=True)
     user = models.CharField(max_length=200, null=True, blank=True)
@@ -39,8 +39,9 @@ class GPSData(models.Model):
 
     @classmethod
     def del_dups(cls):
+        print "got here!"
         c = 0
-        for row in cls.objects.filter(platform='FSQ', fs_dup=False):
+        for row in cls.objects.filter(platform='FSQ', fs_dup=False, date_taken__gte=datetime.datetime.now()-datetime.timedelta(days=2)):
             #Same location, day/hour and venue > 1?  Delete!
             if cls.objects.filter(latitude=row.latitude, longitude=row.longitude,
                                   date_taken__day=row.date_taken.day, date_taken__month=row.date_taken.month,
@@ -52,15 +53,15 @@ class GPSData(models.Model):
                 print "deleted %s" % c
         print 'deleted FSQ: ' +str(c)
 
-        c=0
-        for row in cls.objects.filter(platform='FLC'):
-            #Same location, day/hour and user > 1?  Delete!
-            if cls.objects.filter(latitude=row.latitude, longitude=row.longitude, user=row.user,
-                                  date_taken=row.date_taken, date_posted=row.date_posted,
-                                  local_id=row.local_id).count() > 1:
-                row.delete()
-                c += 1
-        print 'deleted FLC: ' +str(c)
+        #c=0
+        #for row in cls.objects.filter(platform='FLC'):
+        #    #Same location, day/hour and user > 1?  Delete!
+        #    if cls.objects.filter(latitude=row.latitude, longitude=row.longitude, user=row.user,
+        #                          date_taken=row.date_taken, date_posted=row.date_posted,
+        #                          local_id=row.local_id).count() > 1:
+        #        row.delete()
+        #        c += 1
+        #print 'deleted FLC: ' +str(c)
 
 
     @property
@@ -71,9 +72,9 @@ class GPSData(models.Model):
     def gen_fs_dups(cls):
         added = 0
         #Delete previously created dups
-        cls.objects.filter(platform='FSQ', fs_dup=True).delete()
+        cls.objects.filter(platform='FSQ', fs_dup=True, date_taken__gte=datetime.datetime.now()-datetime.timedelta(days=3)).delete()
         #Look for originals
-        for row in cls.objects.filter(platform='FSQ', fs_dup=False):
+        for row in cls.objects.filter(platform='FSQ', fs_dup=False, date_taken__gte=datetime.datetime.now()-datetime.timedelta(days=3)):
             #More than 1 checkin?
             if row.fs_data.here_now > 1:
                 #Create duplicate for each checkin
